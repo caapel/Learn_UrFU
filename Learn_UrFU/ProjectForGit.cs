@@ -8,6 +8,6 @@ namespace ProjectForGit
 {
     internal class ProjectForGit
     {
-        
+        //тестирование commit'а
     }
 }
