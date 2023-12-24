@@ -8,6 +8,5 @@ namespace ProjectForGit
 {
     internal class ProjectForGit
     {
-        //3 lesson
     }
 }
