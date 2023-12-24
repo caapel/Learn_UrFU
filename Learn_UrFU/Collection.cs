@@ -8,6 +8,6 @@ namespace Learn_UrFU
 {
     internal class Collection
     {
-        //new lesson
+        //изменение 2
     }
 }
