@@ -1,6 +1,6 @@
-﻿using System;
+﻿/*using System;
 
-/*namespace Learn_UrFU
+namespace Learn_UrFU
 {
     class Array
     {

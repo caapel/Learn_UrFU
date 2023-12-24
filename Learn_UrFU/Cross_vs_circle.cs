@@ -1,11 +1,11 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 
-/*namespace Learn_UrFU
+namespace Learn_UrFU
 {
     internal class Cross_vs_circle
     {

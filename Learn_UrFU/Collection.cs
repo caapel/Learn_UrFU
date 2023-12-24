@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectForGit
+namespace Learn_UrFU
 {
-    internal class ProjectForGit
+    internal class Collection
     {
-        //3 lesson
+        //new lesson
     }
 }
