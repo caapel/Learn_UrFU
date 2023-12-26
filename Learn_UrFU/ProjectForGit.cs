@@ -8,6 +8,6 @@ namespace ProjectForGit
 {
     internal class ProjectForGit
     {
-        //перенос локальных изменений в удаленный репозиторий
+        //внесение изменений в удаленном репозитории в ветке task 4.2
     }
 }
