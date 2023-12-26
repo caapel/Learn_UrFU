@@ -8,7 +8,6 @@ namespace ProjectForGit
 {
     internal class ProjectForGit
     {
-        //изменения в ветку lesson_3.4_test
-        //изменение в файле для задания 3.5
+        //перенос локальных изменений в удаленный репозиторий
     }
 }
