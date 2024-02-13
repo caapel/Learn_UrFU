@@ -1,6 +1,6 @@
 ﻿namespace Learn_UrFU
 {
-    class SomeClass
+    /*class SomeClass
     {
         public static int s = 1;
         public int d = 1;
@@ -19,5 +19,24 @@
             object2.Run();
             object1.Run();
         }
+    }*/
+
+    public static class StringExtensions
+    { 
+        public static int ToInt(this string value) 
+        { 
+            return Convert.ToInt32(value);
+        }
     }
+
+    class Program
+    {
+        public static void Main()
+        {
+            var arg1 = "100500";
+            Console.Write(arg1.ToInt() + "42".ToInt()); // 100542
+        }
+    }
+    
+    
 }
