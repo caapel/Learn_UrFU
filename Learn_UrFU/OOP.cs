@@ -1,4 +1,8 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.Metrics;
+using System.Globalization;
+using System.IO;
+using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace Learn_UrFU
 {
@@ -113,6 +117,141 @@ namespace Learn_UrFU
                 ImageName,
                 GaussianParameter.ToString(CultureInfo.InvariantCulture));
             //do something useful
+        }
+    }*/
+
+    /*public class Steam
+    {
+        private double p;
+        private double t;
+
+        public Steam (double p, double t)
+        {
+            this.p = p;
+            this.t = t;
+        }
+    }
+
+    public class Program
+    {
+        public static void Main()
+        {
+            Steam steam_object = new Steam(115, 374);
+            object examp_object;
+            examp_object = steam_object;
+        }
+    }*/
+
+    /*class Phone
+    {
+        public string Number = "+7(999)888-77-66";
+        public string Model;
+        public static string Сonnection = "GSM";
+    }
+
+    class Program
+    {
+        public static void Main()
+        {
+            Console.WriteLine(new Phone().Number);
+        }
+    }*/
+
+    /*class ClassA
+    {
+        public string FieldA;
+    }
+
+    class ClassB : ClassA
+    {
+        public string FieldB;
+    }
+
+    class ClassC : ClassA
+    {
+        public string FieldC;
+    }
+
+    class ClassD : ClassC
+    {
+        public string FieldD;
+    }
+
+    class Program
+    {
+        public static void Main()
+        { 
+            ClassD obg = new ClassD();
+        }
+    }*/
+
+    /*class Transport
+    {
+    }
+
+    class EngineTransport : Transport
+    {
+    }
+
+    class Car : EngineTransport
+    {
+    }
+
+    class Program
+    {
+        static void Main()
+        {
+            var car = new Car();
+            var engineTransport = (EngineTransport)car;
+            var transport = (Transport)engineTransport;
+            engineTransport = new EngineTransport();
+        }
+    }*/
+
+    /*abstract public class Animal
+    {
+        public abstract void goAction();
+    }
+
+    class Horse : Animal
+    {
+        override public void goAction()
+        {
+            Console.WriteLine("Run");
+        }
+    }
+
+    class Rabbit : Animal
+    {
+        override public void goAction()
+        {
+            Console.WriteLine("Jump");
+        }
+    }*/
+
+    /*public class Shape
+    {
+        public virtual string Draw()
+        {
+            return "Performing base class drawing tasks";
+        }
+    }
+
+    public class Circle : Shape
+    {
+        public override string Draw()
+        {
+            return "Drawing a circle";
+        }
+    }
+
+    public class Program
+    {
+        public static void Main()
+        {
+            Circle obj = (Circle)new Shape();
+
+            Console.WriteLine(obj.Draw());
         }
     }*/
 }
