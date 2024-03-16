@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Learn_UrFU
+/*namespace Learn_UrFU
 {
     internal class Coll_lesson1
     {
@@ -42,4 +42,4 @@ namespace Learn_UrFU
             return string.Join(' ', result);
         }
     }
-}
+}*/
