@@ -1,4 +1,4 @@
-﻿namespace Learn_UrFU
+﻿/*namespace Learn_UrFU
 {
     internal class Dict_lesson1
     {
@@ -45,4 +45,4 @@
             return dictionary;
         }
     }
-}
+}*/
