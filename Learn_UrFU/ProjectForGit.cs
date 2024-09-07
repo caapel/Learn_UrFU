@@ -18,6 +18,8 @@ using System.Threading.Tasks;
 
             foreach (var num in array[1])
                 Console.Write(num + " ");
+
+            Console.WriteLine("12345\n321");
         }
     }
 }*/
