@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,7 +45,6 @@ namespace Learn_UrFU
 
         public static Dictionary<string, string> GetMostFrequentNextWords(List<List<string>> text)
         {
-            // подумать, как переделать эту двойку
             var result = GetKeys(text);  // получаем ключи для словаря
 
             foreach (var nGramm in result)  // ищем самое частотное продолжение к каждому ключу
@@ -81,16 +81,21 @@ namespace Learn_UrFU
             {
                 for (int i = 0; i < Sentence.Count - 1; i++) // проходимся по словам
                 {
-                    string key = "";
-                    
-                    for (int j = 0; j < Sentence.Count - 1 - i; j++) // проходимся по всем вариантам N-грамм
+                    StringBuilder key = new();
+
+                    // проходимся по всем вариантам N-грамм
+                    int N;
+                    if (Sentence.Count - 1 - i >= 2) N = 2;
+                    else N = 1;
+
+                    for (int j = 0; j < N; j++)
                     { 
                         if (j != 0) 
-                            key += " ";
-                        key += Sentence[i + j];
+                            key.Append(' ');
+                        key.Append(Sentence[i + j]);
 
-                        if (!result.ContainsKey(key))
-                            result[key] = "";
+                        if (!result.ContainsKey(key.ToString()))
+                            result[key.ToString()] = "";
                     }
                 }
             }
@@ -102,19 +107,21 @@ namespace Learn_UrFU
         private static Dictionary<string, int> GetNextWords(List<List<string>> text, string key)
         {
             var result = new Dictionary<string, int>();
+            string[] keys = key.Split(' ');
 
-            //получение списка продолжений по ключу key
             foreach (var sentence in text)
             {
-                string line = string.Join(' ', sentence.ToArray());
-                if (line.Contains(key) && (line.IndexOf(key) + key.Length) < line.Length)
+                if (keys.Length == 1)
                 {
-                    //получение продолжения N-граммы
-                    string nextWord = line.Substring(line.IndexOf(key) + key.Length)
-                               .Split(' ', StringSplitOptions.RemoveEmptyEntries)[0];
-
-                    //заполнение связки <ключ>:<значение>
-                    result[nextWord] = GetFrequency(text, key, nextWord);
+                    for (int i = 0; i < sentence.Count - 1; i++)
+                        if (sentence[i] == key)
+                            result[sentence[i + 1]] = GetFrequency(text, key, sentence[i + 1]);
+                }
+                else
+                {
+                    for (int i = 0; i < sentence.Count - 2; i++)
+                        if (sentence[i] == keys[0] && sentence[i + 1] == keys[1])
+                            result[sentence[i + 2]] = GetFrequency(text, key, sentence[i + 2]);
                 }
             }
             return result;
@@ -124,12 +131,22 @@ namespace Learn_UrFU
         private static int GetFrequency(List<List<string>> text, string key, string nextWord)
         {
             int count = 0;
-            
+            string[] keys = key.Split(' ');
+
             foreach (var sentence in text)
             {
-                string line = string.Join(' ', sentence.ToArray());
-                if (line.Contains(string.Format("{0} {1}", key, nextWord)))
-                    count++;
+                if (keys.Length == 1)
+                {
+                    for (int i = 0; i < sentence.Count - 1; i++)
+                        if (sentence[i] == key && sentence[i + 1] == nextWord)
+                            count++;
+                }
+                else
+                {
+                    for (int i = 0; i < sentence.Count - 2; i++)
+                        if (sentence[i] == keys[0] && sentence[i + 1] == keys[1] && sentence[i + 2] == nextWord)
+                            count++;
+                }                    
             }
             return count;
         }
@@ -151,8 +168,18 @@ namespace Learn_UrFU
         {
             /*string text = "   For Jessica, who loves stories,\r\n   For Anne, who loved them too;\r\n   And for Di, who heard this one first.";
             ParseSentences("a b c d. b c d. e b c a d.");*/
-            GetMostFrequentNextWords(ParseSentences("x y z"));
-            //GetNextWords(ParseSentences("a b c d. b c d. e b c a d."), "b c");
+
+            var watch = new Stopwatch();
+            watch.Start();
+
+            string text = File.ReadAllText("HarryPotterText.txt");
+
+            GetMostFrequentNextWords(ParseSentences(text));
+
+            watch.Stop();
+            Console.WriteLine(watch.ElapsedMilliseconds);
+
+            //GetMostFrequentNextWords(ParseSentences("a b c d. b c d. e b c a d."));
         }
     }
 }
