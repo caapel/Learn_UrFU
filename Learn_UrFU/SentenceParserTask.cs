@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Learn_UrFU
@@ -39,138 +40,125 @@ namespace Learn_UrFU
 
         public static Dictionary<string, string> GetMostFrequentNextWords(List<List<string>> text)
         {
-            var result = new Dictionary<string, string> ();
-            var model = GetKeys(text); // получаем ключи для словаря
+            var keysList = GetKeys(text);
+            var nextWordList = GetNextWords(text);
+            var modelDict = CreateDictionary(keysList, nextWordList);
+            var result = LoadDictionary(keysList, modelDict);
 
-            foreach (var nGramm in model)
-            {
-                // ускоряем обработку для единичных продолжений
-                if (nGramm.Value.Count == 1)
-                {
-                    foreach (var dict in nGramm.Value)
-                        result[nGramm.Key] = dict.Key;
-                    continue;
-                }
-
-                // определяем самое частотное продолжение
-                //int max = nGramm.Value.Min(pair => pair.Value.);
-                int max = 0;
-                foreach (var dict in nGramm.Value)
-                    if (dict.Value > max) max = dict.Value;
-
-                // формируем список самых частотных продолжений
-                var mostFrequentNextWords = new List<string>();
-                foreach (var dict in nGramm.Value)
-                    if (dict.Value == max) mostFrequentNextWords.Add(dict.Key);
-
-                // добавляем в итоговый словарь самое частотное продолжение
-                if (mostFrequentNextWords.Count == 1)
-                    result[nGramm.Key] = mostFrequentNextWords[0];
-                else
-                    result[nGramm.Key] = GetMinLexigraphicWord(mostFrequentNextWords);
-            }
             return result;
         }
 
-        private static Dictionary<string, Dictionary<string, int>> GetKeys(List<List<string>> text)
+        // получение списка ключей
+        private static List<string> GetKeys(List<List<string>> text)
         {
-            var result = new Dictionary<string, Dictionary<string, int>>();
+            var keys = new List<string>();
 
             foreach (var Sentence in text) //проходимся по предложениям
             {
-                for (int i = 0; i < Sentence.Count - 1; i++) // проходимся по словам
-                {
-                    var keys = new List<string>();
+                for (int i = 0; i < Sentence.Count - 1; i++) // биграммы
+                    keys.Add(Sentence[i]);
 
-                    // проходимся по всем вариантам N-грамм
-                    for (int j = 0; j < (Sentence.Count - 1 - i >= 2? 2: 1); j++)
-                    {
-                        keys.Add(Sentence[i + j]);
-
-                        string key = string.Join(' ', keys);
-                        if (!result.ContainsKey(key))
-                            result[key] = GetNextWords(text, keys.ToArray());
-                    }
-                }
+                for (int j = 0; j < Sentence.Count - 2; j++) // триграммы
+                    keys.Add(Sentence[j] + " " + Sentence[j + 1]);
             }
-            return result;
+            return keys;
         }
 
-        // получение словаря продолжений для выбранного ключа в формате <продолжение>:<частота>
-        private static Dictionary<string, int> GetNextWords(List<List<string>> text, string[] keys)
+        // получение списка продолжений
+        private static List<string> GetNextWords(List<List<string>> text)
         {
-            var result = new Dictionary<string, int>();
+            var nextWordList = new List<string>();
 
-            foreach (var sentence in text)
+            foreach (var Sentence in text) //проходимся по предложениям
             {
-                if (keys.Length == 1)
-                {
-                    for (int i = 0; i < sentence.Count - 1; i++)
-                        if (sentence[i] == keys[0])
-                            result[sentence[i + 1]] = GetFrequency(text, keys, sentence[i + 1]);
-                }
-                else
-                {
-                    for (int i = 0; i < sentence.Count - 2; i++)
-                        if (sentence[i] == keys[0] && sentence[i + 1] == keys[1])
-                            result[sentence[i + 2]] = GetFrequency(text, keys, sentence[i + 2]);
-                }
+                for (int i = 1; i < Sentence.Count; i++) // биграммы
+                    nextWordList.Add(Sentence[i]);
+
+                for (int j = 2; j < Sentence.Count; j++) // триграммы
+                    nextWordList.Add(Sentence[j]);
             }
-            return result;
+            return nextWordList;
         }
 
-        // получение частоты для выбранного продолжения по ключу
-        private static int GetFrequency(List<List<string>> text, string[] keys, string nextWord)
+        // группировка списков в словарь
+        private static Dictionary<string, Dictionary<string, int>> 
+            CreateDictionary(List<string> keysList, List<string> nextWordList)
         {
-            int count = 0;
+            var dict = new Dictionary<string, Dictionary<string, int>>();
 
-            foreach (var sentence in text)
+            for (int i = 0; i < keysList.Count; i++)
             {
-                if (keys.Length == 1)
-                {
-                    for (int i = 0; i < sentence.Count - 1; i++)
-                        if (sentence[i] == keys[0] && sentence[i + 1] == nextWord)
-                            count++;
-                }
-                else
-                {
-                    for (int i = 0; i < sentence.Count - 2; i++)
-                        if (sentence[i] == keys[0] && sentence[i + 1] == keys[1] && sentence[i + 2] == nextWord)
-                            count++;
-                }                    
+                if (!dict.ContainsKey(keysList[i]))
+                    dict.Add(keysList[i], new Dictionary<string, int> { [nextWordList[i]] = 1 });
+                else if (dict.ContainsKey(keysList[i]) && dict[keysList[i]].ContainsKey(nextWordList[i]))
+                    dict[keysList[i]][nextWordList[i]]++;
+                else if (dict.ContainsKey(keysList[i]))
+                    dict[keysList[i]].Add(nextWordList[i], 1);
             }
-            return count;
+            return dict;
         }
 
         // получение наименьшего лексиграфического слова
-        private static string GetMinLexigraphicWord(List<string> mostFrequentNextWords)
+        static Dictionary<string, string> LoadDictionary(List<string> keysList, 
+            Dictionary<string, Dictionary<string, int>> dict)
         {
-            string MinLexigraphicWord = mostFrequentNextWords[0];
+            var result = new Dictionary<string, string>();
 
-            for (int i = 0; i < mostFrequentNextWords.Count - 1; i++)
+            foreach (var key in keysList)
             {
-                if (string.CompareOrdinal(MinLexigraphicWord, mostFrequentNextWords[i + 1]) > 0)
-                    MinLexigraphicWord = mostFrequentNextWords[i + 1];
+                int max = 0;
+
+                foreach (var pair in dict[key].Keys)
+                {
+                    if (dict[key][pair] > max)
+                    {
+                        max = dict[key][pair];
+                        result[key] = pair;
+                    }
+
+                    else if (dict[key][pair] == max)
+                        if (string.CompareOrdinal(result[key], pair) > 0) { result[key] = pair; }
+                }
             }
-            return MinLexigraphicWord;
+            return result; ;
+        }
+
+        public static string ContinuePhrase(Dictionary<string, string> nextWords, string phraseBeginning, int wordsCount)
+        {
+            var phraseList = SentencesParserTask.ParseSentences(phraseBeginning)[0];
+
+            for (int i = 0; i < wordsCount; i++)
+            {
+                var count = phraseList.Count;
+                var biGramm = phraseList[count - 1];
+                var treeGramm = new string(" ");
+
+                if (phraseList.Count > 1)
+                    treeGramm = phraseList[count - 2] + ' ' + phraseList[count - 1];
+
+                if (phraseList.Count > 1 && nextWords.ContainsKey(treeGramm))
+                    phraseList.Add(nextWords[treeGramm]);
+                else if (nextWords.ContainsKey(biGramm))
+                    phraseList.Add(nextWords[biGramm]);
+                else break;
+            }           
+            return string.Join(' ', phraseList);
         }
 
         public static void Main()
         {
-            /*string text = "   For Jessica, who loves stories,\r\n   For Anne, who loved them too;\r\n   And for Di, who heard this one first.";
-            ParseSentences("a b c d. b c d. e b c a d.");*/
-
-            var watch = new Stopwatch();
-            watch.Start();
+            //var watch = new Stopwatch();
+            //watch.Start();
 
             string text = File.ReadAllText("HarryPotterText.txt");
+            var nextWords = GetMostFrequentNextWords(ParseSentences(text));
 
-            GetMostFrequentNextWords(ParseSentences(text));
+            Console.WriteLine("Введите начало фразы");
+            var phraseBeginning = Console.ReadLine();
+            Console.WriteLine(ContinuePhrase(nextWords, phraseBeginning, 10));
 
-            watch.Stop();
-            Console.WriteLine(watch.ElapsedMilliseconds);
-
-            //GetMostFrequentNextWords(ParseSentences("a b c d. b c d. e b c a d."));
+            //watch.Stop();
+            //Console.WriteLine(watch.ElapsedMilliseconds);
         }
     }
 }
