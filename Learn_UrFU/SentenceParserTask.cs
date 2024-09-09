@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Learn_UrFU
 {
@@ -45,22 +39,29 @@ namespace Learn_UrFU
 
         public static Dictionary<string, string> GetMostFrequentNextWords(List<List<string>> text)
         {
-            var result = GetKeys(text);  // получаем ключи для словаря
+            var result = new Dictionary<string, string> ();
+            var model = GetKeys(text); // получаем ключи для словаря
 
-            foreach (var nGramm in result)  // ищем самое частотное продолжение к каждому ключу
+            foreach (var nGramm in model)
             {
-                // получаем словарь продолжений для выбранного ключа
-                var nextWords = GetNextWords(text, nGramm.Key);
+                // ускоряем обработку для единичных продолжений
+                if (nGramm.Value.Count == 1)
+                {
+                    foreach (var dict in nGramm.Value)
+                        result[nGramm.Key] = dict.Key;
+                    continue;
+                }
 
                 // определяем самое частотное продолжение
+                //int max = nGramm.Value.Min(pair => pair.Value.);
                 int max = 0;
-                foreach (var word in nextWords)
-                    if (word.Value > max) max = word.Value;
+                foreach (var dict in nGramm.Value)
+                    if (dict.Value > max) max = dict.Value;
 
                 // формируем список самых частотных продолжений
                 var mostFrequentNextWords = new List<string>();
-                foreach (var word in nextWords)
-                    if (word.Value == max) mostFrequentNextWords.Add(word.Key);
+                foreach (var dict in nGramm.Value)
+                    if (dict.Value == max) mostFrequentNextWords.Add(dict.Key);
 
                 // добавляем в итоговый словарь самое частотное продолжение
                 if (mostFrequentNextWords.Count == 1)
@@ -68,77 +69,67 @@ namespace Learn_UrFU
                 else
                     result[nGramm.Key] = GetMinLexigraphicWord(mostFrequentNextWords);
             }
-
             return result;
         }
 
-        // получение ключей для словаря (N = 1 для биграмм и N = 2 для биграмм и триграмм)
-        private static Dictionary<string, string> GetKeys(List<List<string>> text)
+        private static Dictionary<string, Dictionary<string, int>> GetKeys(List<List<string>> text)
         {
-            var result = new Dictionary<string, string>();
+            var result = new Dictionary<string, Dictionary<string, int>>();
 
             foreach (var Sentence in text) //проходимся по предложениям
             {
                 for (int i = 0; i < Sentence.Count - 1; i++) // проходимся по словам
                 {
-                    StringBuilder key = new();
+                    var keys = new List<string>();
 
                     // проходимся по всем вариантам N-грамм
-                    int N;
-                    if (Sentence.Count - 1 - i >= 2) N = 2;
-                    else N = 1;
+                    for (int j = 0; j < (Sentence.Count - 1 - i >= 2? 2: 1); j++)
+                    {
+                        keys.Add(Sentence[i + j]);
 
-                    for (int j = 0; j < N; j++)
-                    { 
-                        if (j != 0) 
-                            key.Append(' ');
-                        key.Append(Sentence[i + j]);
-
-                        if (!result.ContainsKey(key.ToString()))
-                            result[key.ToString()] = "";
+                        string key = string.Join(' ', keys);
+                        if (!result.ContainsKey(key))
+                            result[key] = GetNextWords(text, keys.ToArray());
                     }
                 }
             }
-
             return result;
         }
 
         // получение словаря продолжений для выбранного ключа в формате <продолжение>:<частота>
-        private static Dictionary<string, int> GetNextWords(List<List<string>> text, string key)
+        private static Dictionary<string, int> GetNextWords(List<List<string>> text, string[] keys)
         {
             var result = new Dictionary<string, int>();
-            string[] keys = key.Split(' ');
 
             foreach (var sentence in text)
             {
                 if (keys.Length == 1)
                 {
                     for (int i = 0; i < sentence.Count - 1; i++)
-                        if (sentence[i] == key)
-                            result[sentence[i + 1]] = GetFrequency(text, key, sentence[i + 1]);
+                        if (sentence[i] == keys[0])
+                            result[sentence[i + 1]] = GetFrequency(text, keys, sentence[i + 1]);
                 }
                 else
                 {
                     for (int i = 0; i < sentence.Count - 2; i++)
                         if (sentence[i] == keys[0] && sentence[i + 1] == keys[1])
-                            result[sentence[i + 2]] = GetFrequency(text, key, sentence[i + 2]);
+                            result[sentence[i + 2]] = GetFrequency(text, keys, sentence[i + 2]);
                 }
             }
             return result;
         }
 
         // получение частоты для выбранного продолжения по ключу
-        private static int GetFrequency(List<List<string>> text, string key, string nextWord)
+        private static int GetFrequency(List<List<string>> text, string[] keys, string nextWord)
         {
             int count = 0;
-            string[] keys = key.Split(' ');
 
             foreach (var sentence in text)
             {
                 if (keys.Length == 1)
                 {
                     for (int i = 0; i < sentence.Count - 1; i++)
-                        if (sentence[i] == key && sentence[i + 1] == nextWord)
+                        if (sentence[i] == keys[0] && sentence[i + 1] == nextWord)
                             count++;
                 }
                 else
