@@ -13,4 +13,8 @@
     <None Remove="lesson_3.5\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LibExample\LibExample.csproj" />
+  </ItemGroup>
+
 </Project>

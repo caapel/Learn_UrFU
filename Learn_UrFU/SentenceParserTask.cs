@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿/*using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -161,4 +161,4 @@ namespace Learn_UrFU
             //Console.WriteLine(watch.ElapsedMilliseconds);
         }
     }
-}
+}*/
