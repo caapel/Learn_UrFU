@@ -2,6 +2,7 @@ using LibExample;
 
 namespace QuadEq.Tests
 {
+    [TestFixture]
     public class SolverTest
     {
         public void TestEquation(double a, double b, double c, params double[] expectedResult)

@@ -14,7 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NUnitLite" Version="4.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LibExample\LibExample.csproj" />
+    <ProjectReference Include="..\QuadEq.Tests\QuadEq.Tests.csproj" />
   </ItemGroup>
 
 </Project>
