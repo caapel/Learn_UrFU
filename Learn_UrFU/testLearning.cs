@@ -4,10 +4,7 @@
     {
         public static void Sin_Cos(double Angle, out double SinAngle, out double CosAngle)
         {
-            SinAngle = Math.Sin(Angle);
-            CosAngle = Math.Cos(Angle);
         }
-    }
 
     class Program
     {
@@ -18,9 +15,9 @@
             Trigonometria.Sin_Cos(Math.PI / 4, out sin, out cos);
 
             Console.WriteLine(string.Format("Sin={0} Cos={1}", sin, cos));
-        }
-    
-    
     }
+    
+    
+}
 
 }*/
