@@ -1,4 +1,4 @@
-﻿namespace Learn_UrFU
+﻿/*namespace Learn_UrFU
 {
     class Recursion
     {
@@ -48,4 +48,4 @@
             }
         }
     }
-}
+}*/

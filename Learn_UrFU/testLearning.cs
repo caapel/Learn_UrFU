@@ -1,23 +1,32 @@
-﻿/*namespace Learn_UrFU
+﻿namespace Learn_UrFU
 {
-    internal class Trigonometria
-    {
-        public static void Sin_Cos(double Angle, out double SinAngle, out double CosAngle)
-        {
-        }
-
     class Program
     {
-        public static void Main(string[] args)
+        static void AlternateCharCases(char[] word, int startIndex, List<string> result)
         {
-            double sin, cos;
+            if (startIndex == word.Length)
+            {
+                result.Add(new string(word));
+                return;
+            }
 
-            Trigonometria.Sin_Cos(Math.PI / 4, out sin, out cos);
+            if (Char.IsLetter(word[startIndex]) && word[startIndex] != 223 && (word[startIndex] < 1425 || word[startIndex] > 1524))
+            {
+                word[startIndex] = Char.ToLower(word[startIndex]);
+                AlternateCharCases(word, startIndex + 1, result);
+                word[startIndex] = Char.ToUpper(word[startIndex]);
+                AlternateCharCases(word, startIndex + 1, result);
+            }
+            else AlternateCharCases(word, startIndex + 1, result);
+        }
 
-            Console.WriteLine(string.Format("Sin={0} Cos={1}", sin, cos));
+        static void Main()
+        {
+             var result = new List<string>();
+             AlternateCharCases("ⅲ ⅳ ⅷ".ToCharArray(), 0, result);
+             foreach (string word in result)
+                 Console.WriteLine(word);
+        }
     }
-    
-    
 }
 
-}*/
