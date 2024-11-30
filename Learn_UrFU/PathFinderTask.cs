@@ -17,27 +17,29 @@ namespace Learn_UrFU
         }
     }
 
-    public static class PathFinderTask
+    public static class PathFinderTask //самый быстрый способ перестановки (< 1 c)
     {
         public static int[] FindBestCheckpointsOrder(Point[] checkpoints)
         {
+            double length = 0;
             var result = new int[checkpoints.Length];
-            MakePermutations(new int[checkpoints.Length], 1, checkpoints, ref result);
+            MakePermutations(new int[checkpoints.Length], 1, ref length, checkpoints, ref result);
 
-            return result; //возвращаем лучший результат
+            return result;
         }
 
-        public static void MakePermutations(int[] permutation, 
+        public static void MakePermutations(int[] permutation,
                                             int position,
+                                            ref double minLength,
                                             Point[] checkpoints,
                                             ref int[] result)
         {
             // отсечение неоптимального пути
-            var minLength = PointExtensions.GetPathLength(checkpoints, result);
             if (minLength != 0 && PointExtensions.GetPathLength(checkpoints, permutation[..position]) >= minLength) return;
 
             if (position == permutation.Length && (PointExtensions.GetPathLength(checkpoints, permutation) < minLength || minLength == 0))
             {
+                minLength = PointExtensions.GetPathLength(checkpoints, permutation);
                 result = permutation.ToArray();
             }
             else
@@ -45,7 +47,7 @@ namespace Learn_UrFU
                     if (Array.IndexOf(permutation, i, 0, position) == -1)
                     {
                         permutation[position] = i;
-                        MakePermutations(permutation, position + 1, checkpoints, ref result);
+                        MakePermutations(permutation, position + 1, ref minLength, checkpoints, ref result);
                     }
         }
     }
