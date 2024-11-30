@@ -9,7 +9,7 @@ namespace Learn_UrFU
         {
             var points = new Point[] { new(1, 1), new(0, 0), new(1, 0), new(0, 1) };
             //var points = new Point[] { new(1, 0), new(1, 1), new(0, 0) };
-            
+
             var Strings = new List<string>();
             foreach (var i in PathFinderTask.FindBestCheckpointsOrder(points))
                 Strings.Add(i.ToString());
@@ -21,46 +21,31 @@ namespace Learn_UrFU
     {
         public static int[] FindBestCheckpointsOrder(Point[] checkpoints)
         {
-            double length = 0;
             var result = new int[checkpoints.Length];
-            MakePermutations(new int[checkpoints.Length], 1, ref length, checkpoints, result);
-
-            //------------------------------------- логирование процедуры
-            // удалить после тестов
-            var strings = new List<string>();
-            foreach (var num in result)
-                strings.Add(num.ToString());
-            Console.WriteLine(string.Join(" ", strings.ToArray()));
-            //-------------------------------------
+            MakePermutations(new int[checkpoints.Length], 1, checkpoints, ref result);
 
             return result; //возвращаем лучший результат
         }
 
         public static void MakePermutations(int[] permutation, 
                                             int position,
-                                            ref double minLength,
                                             Point[] checkpoints,
-                                            int[] result)
+                                            ref int[] result)
         {
             // отсечение неоптимального пути
+            var minLength = PointExtensions.GetPathLength(checkpoints, result);
             if (minLength != 0 && PointExtensions.GetPathLength(checkpoints, permutation[..position]) >= minLength) return;
 
-            if (position == permutation.Length)
+            if (position == permutation.Length && (PointExtensions.GetPathLength(checkpoints, permutation) < minLength || minLength == 0))
             {
-                var CurrentLength = PointExtensions.GetPathLength(checkpoints, permutation);
-                if (CurrentLength < minLength)
-                {
-                    minLength = CurrentLength;
-                    result = permutation.ToArray();
-                }
-                    
+                result = permutation.ToArray();
             }
             else
                 for (int i = 0; i < permutation.Length; i++)
                     if (Array.IndexOf(permutation, i, 0, position) == -1)
                     {
                         permutation[position] = i;
-                        MakePermutations(permutation, position + 1, ref minLength, checkpoints, result);
+                        MakePermutations(permutation, position + 1, checkpoints, ref result);
                     }
         }
     }
