@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿/*using System.Drawing;
 using System.IO;
 
 namespace Learn_UrFU
@@ -74,4 +74,4 @@ namespace Learn_UrFU
             return Math.Sqrt(dx * dx + dy * dy);
         }
     }
-}
+}*/
