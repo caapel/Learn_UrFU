@@ -47,7 +47,7 @@ namespace QuadEq.Tests
                 var result = QuadraticEquation.Solve(a, b, c);
 
                 foreach (var x in result)
-                    Assert.AreEqual(0, a * x * x + b * x + c, 1e-10);
+                    Assert.That(a * x * x + b * x + c, Is.EqualTo(0).Within(1e-10));
             }
         }
     }
